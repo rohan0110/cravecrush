@@ -1,20 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:cravecrush/models/guide_model.dart';
 import 'package:cravecrush/screens/guide_detail.dart';
+import 'package:cravecrush/screens/video_detail.dart';
 
-class VideoDetailPage extends StatelessWidget {
-  final String videoUrl;
+// class DetailVideo extends StatelessWidget {
+//   final String video;
 
-  const VideoDetailPage({super.key, required this.videoUrl}); // Constructor accepting videoUrl parameter
+//   DetailVideo({required this.video});
 
-  @override
-  Widget build(BuildContext context) {
-    // Build your video detail page UI here
-    return Container(
-      child: Text('Video URL: $videoUrl'), // Example usage of videoUrl
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       child: Text('Video URL: $video'),
+//     );
+//   }
+// }
 
 class NewsHomePage extends StatelessWidget {
   const NewsHomePage({Key? key}) : super(key: key);
@@ -45,8 +47,8 @@ class NewsHomePage extends StatelessWidget {
                     ),
 
                     // Articles Section
-                    const Padding(
-                      padding: EdgeInsets.only(right: 20, top: 20),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 20, top: 20),
                       child: Row(
                         children: [
                           Text(
@@ -69,7 +71,7 @@ class NewsHomePage extends StatelessWidget {
                       height: 15,
                     ),
                     SizedBox(
-                      height: 250, // Adjust height as needed
+                      height: 220,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
                         itemCount: newsItems.length,
@@ -92,7 +94,8 @@ class NewsHomePage extends StatelessWidget {
                                   children: [
                                     Container(
                                       height: 100,
-                                      width: 130, // Adjust width as needed
+                                      width: 130,
+                                      margin: EdgeInsets.only(left: 10),
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
                                             image: AssetImage(news.image),
@@ -104,35 +107,36 @@ class NewsHomePage extends StatelessWidget {
                                       height: 10,
                                     ),
                                     SizedBox(
-                                      width: 150, // Adjust width as needed
-                                      child: Text(
-                                        news.newsTitle,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
+                                      width: 150,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          news.newsTitle,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ),
                                     const SizedBox(
                                       height: 5,
                                     ),
+
                                     Container(
                                       decoration: BoxDecoration(
-                                        color: news.color
-                                            .withOpacity(0.2), // Adjust opacity as needed
-                                        borderRadius: BorderRadius.circular(
-                                            10.0), // Adjust border radius as needed
+                                        color: news.color.withOpacity(0.2),
+                                        borderRadius: BorderRadius.circular(10.0),
                                         border: Border.all(
-                                          color: news.color.withOpacity(
-                                              0.4), // Adjust border color as needed
-                                          width: 1.5, // Adjust border width as needed
+                                          color: news.color.withOpacity(0.4),
+                                          width: 1.5,
                                         ),
                                       ),
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 5.0,
-                                          horizontal: 10.0), // Adjust padding as needed
+                                      margin: EdgeInsets.only(left: 10, top: 5),
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 5.0, horizontal: 10.0),
                                       child: Text(
                                         news.newsCategories,
                                         style: TextStyle(
@@ -140,7 +144,8 @@ class NewsHomePage extends StatelessWidget {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-                                    )
+                                    ),
+                                    // )
                                   ],
                                 ),
                               ),
@@ -156,7 +161,7 @@ class NewsHomePage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                          Row(
                             children: [
                               Text(
                                 "Videos",
@@ -177,7 +182,7 @@ class NewsHomePage extends StatelessWidget {
                             height: 15,
                           ),
                           SizedBox(
-                            height: 250, // Adjust height as needed
+                            height: 220,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               itemCount: videoItems.length,
@@ -185,13 +190,10 @@ class NewsHomePage extends StatelessWidget {
                                 final video = videoItems[index];
                                 return GestureDetector(
                                   onTap: () {
-
-                                    // Navigate to the VideoDetailPage passing the video URL
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => VideoDetailPage(
-                                          videoUrl: video.videoUrl, // Pass the video URL
+                                        builder: (context) => DetailVideo(video: video
                                         ),
                                       ),
                                     );
@@ -207,6 +209,7 @@ class NewsHomePage extends StatelessWidget {
                                           Stack(
                                             children: [
                                               Container(
+                                                margin: EdgeInsets.only(left: 10),
                                                 height: 100,
                                                 width: 130, // Adjust width as needed
                                                 decoration: BoxDecoration(
@@ -217,7 +220,7 @@ class NewsHomePage extends StatelessWidget {
                                                   borderRadius: BorderRadius.circular(10),
                                                 ),
                                               ),
-                                              const Center(
+                                              Center(
                                                 child: Icon(
                                                   Icons.play_circle_fill,
                                                   size: 50,
@@ -231,13 +234,16 @@ class NewsHomePage extends StatelessWidget {
                                           ),
                                           SizedBox(
                                             width: 150, // Adjust width as needed
-                                            child: Text(
-                                              video.title,
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
+                                            child: Padding(
+                                              padding: EdgeInsets.only(left: 10),
+                                              child: Text(
+                                                video.title,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -253,7 +259,8 @@ class NewsHomePage extends StatelessWidget {
                                                 width: 1.5,
                                               ),
                                             ),
-                                            padding: const EdgeInsets.symmetric(
+                                            margin: EdgeInsets.only(left: 10, top: 5),
+                                            padding: EdgeInsets.symmetric(
                                               vertical: 5.0,
                                               horizontal: 10.0,
                                             ),
@@ -332,4 +339,3 @@ class NewsHomePage extends StatelessWidget {
     );
   }
 }
-

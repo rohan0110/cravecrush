@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cravecrush/screens/home_screen.dart'; // Import your home page
+import 'package:cravecrush/screens/notification_service.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 
 class GetStartedPage extends StatefulWidget {
-  final String uid; // UID parameter
+  final String uid;
 
-  const GetStartedPage({Key? key, required this.uid}) : super(key: key); // Constructor with UID parameter
+  const GetStartedPage({Key? key, required this.uid}) : super(key: key);
 
   @override
   _GetStartedPageState createState() => _GetStartedPageState();
@@ -24,7 +26,13 @@ class _GetStartedPageState extends State<GetStartedPage> {
   final List<Map<String, dynamic>> _userData = [
     {},
     {},
-    {},
+    {
+      'times_to_smoke': [],
+      'reasons_started': [],
+      'reasons_to_quit': [],
+      'other_reason_started': '',
+      'other_reason_quit': ''
+    },
   ];
 
   void _submitForm(BuildContext context) {
@@ -33,7 +41,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
       form.save();
 
       if (_currentPageIndex == _formKeys.length - 1) {
-        // Save user data to Firestore
         try {
           FirebaseFirestore.instance.collection('users').doc(widget.uid).set({
             'first_name': _userData[0]['first_name'],
@@ -42,32 +49,25 @@ class _GetStartedPageState extends State<GetStartedPage> {
             'gender': _userData[0]['gender'],
             'num_cigarettes': _userData[1]['num_cigarettes'],
             'price_per_cigarette': _userData[1]['price_per_cigarette'],
-            'times_to_smoke': _userData[1]['times_to_smoke'],
+            'times_to_smoke': _userData[2]['times_to_smoke'],
             'reasons_started': _userData[2]['reasons_started'],
             'other_reason_started': _userData[2]['other_reason_started'],
             'reasons_to_quit': _userData[2]['reasons_to_quit'],
             'other_reason_quit': _userData[2]['other_reason_quit'],
           }).then((_) {
-            // Data saved successfully
             print('User data saved to Firestore');
-            // Navigate to the home page after submitting the form
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomePage()),
                   (Route<dynamic> route) => false,
             );
           }).catchError((error) {
-            // Handle errors
             print('Failed to save user data: $error');
-            // Optionally, display an error message to the user
           });
         } catch (error) {
-          // Handle Firestore errors
           print('Failed to save user data: $error');
-          // Optionally, display an error message to the user
         }
       } else {
-        // Move to the next section
         _pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
         setState(() {
           _currentPageIndex++;
@@ -83,7 +83,14 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
     if (pickedTime != null) {
       setState(() {
-        _userData[1]['times_to_smoke'].add('${pickedTime.hour}:${pickedTime.minute}');
+        final String formattedTime = '${pickedTime.hour}:${pickedTime.minute}';
+
+        // Ensure _userData[2]['times_to_smoke'] is of type List<String>
+        List<String> timesToSmoke = List<String>.from(_userData[2]['times_to_smoke']);
+        timesToSmoke.add(formattedTime);
+
+        // Pass the properly typed list to the NotificationService
+        NotificationService.scheduleNotifications(timesToSmoke);
       });
     }
   }
@@ -209,23 +216,33 @@ class _GetStartedPageState extends State<GetStartedPage> {
             },
             onSaved: (value) => _userData[1]['price_per_cigarette'] = double.tryParse(value ?? '') ?? 0.0,
           ),
-          // Display selected times
-          if (_userData[1]['times_to_smoke'] != null)
-            Wrap(
-              spacing: 8.0,
-              children: List.generate(
-                _userData[1]['times_to_smoke'].length,
-                    (index) => Chip(
-                  label: Text(_userData[1]['times_to_smoke'][index]),
-                  onDeleted: () {
-                    setState(() {
-                      _userData[1]['times_to_smoke'].removeAt(index);
-                    });
-                  },
+          if (_userData[2]['times_to_smoke'] != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    'Select the time you smoke more oftenly:',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
+                Wrap(
+                  spacing: 8.0,
+                  children: List.generate(
+                    _userData[2]['times_to_smoke'].length,
+                        (index) => Chip(
+                      label: Text(_userData[2]['times_to_smoke'][index]),
+                      onDeleted: () {
+                        setState(() {
+                          _userData[2]['times_to_smoke'].removeAt(index);
+                        });
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
-          // Button to add time
           ElevatedButton(
             onPressed: () => _selectTime(context),
             child: Text('Add Time'),
@@ -241,56 +258,85 @@ class _GetStartedPageState extends State<GetStartedPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(labelText: 'Reasons started smoking'),
-            items: ['Stress', 'Peer pressure', 'Curiosity', 'Other'].map((reason) {
-              return DropdownMenuItem<String>(
-                value: reason,
-                child: Text(reason),
-              );
-            }).toList(),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select reasons for starting smoking';
-              }
-              return null;
-            },
+          _buildMultiSelectFormField(
+            title: 'Reasons started smoking',
+            dataSource: [
+              {"display": "Stress", "value": "Stress"},
+              {"display": "Peer pressure", "value": "Peer pressure"},
+              {"display": "Curiosity", "value": "Curiosity"},
+              {"display": "Other", "value": "Other"},
+            ],
+            selectedValues: _userData[2]['reasons_started'],
             onChanged: (value) {
               setState(() {
                 _userData[2]['reasons_started'] = value;
               });
             },
           ),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Other reasons started smoking (if any)'),
-            onSaved: (value) => _userData[2]['other_reason_started'] = value ?? '',
-          ),
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(labelText: 'Reasons to quit smoking'),
-            items: ['Health concerns', 'Financial reasons', 'Social reasons', 'Other'].map((reason) {
-              return DropdownMenuItem<String>(
-                value: reason,
-                child: Text(reason),
-              );
-            }).toList(),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select reasons for quitting smoking';
-              }
-              return null;
-            },
+          if (_userData[2]['reasons_started'] != null && _userData[2]['reasons_started'].contains('Other'))
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Other reasons started smoking (if any)'),
+              onSaved: (value) => _userData[2]['other_reason_started'] = value ?? '',
+            ),
+          _buildMultiSelectFormField(
+            title: 'Reasons to quit smoking',
+            dataSource: [
+              {"display": "Health concerns", "value": "Health concerns"},
+              {"display": "Financial reasons", "value": "Financial reasons"},
+              {"display": "Social reasons", "value": "Social reasons"},
+              {"display": "Other", "value": "Other"},
+            ],
+            selectedValues: _userData[2]['reasons_to_quit'],
             onChanged: (value) {
               setState(() {
                 _userData[2]['reasons_to_quit'] = value;
               });
             },
           ),
-          TextFormField(
-            decoration: const InputDecoration(labelText: 'Other reasons to quit smoking (if any)'),
-            onSaved: (value) => _userData[2]['other_reason_quit'] = value ?? '',
-          ),
+          if (_userData[2]['reasons_to_quit'] != null && _userData[2]['reasons_to_quit'].contains('Other'))
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Other reasons to quit smoking (if any)'),
+              onSaved: (value) => _userData[2]['other_reason_quit'] = value ?? '',
+            ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMultiSelectFormField({
+    required String title,
+    required List<Map<String, dynamic>> dataSource,
+    required List<dynamic> selectedValues,
+    required Function(List<dynamic>) onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        SizedBox(height: 8),
+        Wrap(
+          spacing: 8.0,
+          children: dataSource.map((item) {
+            final value = item['value'];
+            return FilterChip(
+              label: Text(item['display']),
+              selected: selectedValues.contains(value),
+              onSelected: (selected) {
+                List<dynamic> newSelectedValues = List.from(selectedValues);
+                if (selected) {
+                  newSelectedValues.add(value);
+                } else {
+                  newSelectedValues.remove(value);
+                }
+                onChanged(newSelectedValues);
+              },
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }

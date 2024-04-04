@@ -1,11 +1,11 @@
-import 'package:cravecrush/models/guide_model.dart';
 import 'package:flutter/material.dart';
+import 'package:cravecrush/models/guide_model.dart';
 
 
 class DetailNews extends StatelessWidget {
   const DetailNews({super.key, required this.news});
 
-  final YourGuide news;
+  final Yournews news;
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +140,7 @@ class DetailNews extends StatelessWidget {
                 backgroundColor: Color(0xFFD9F9F5),
                 child:Icon(Icons.more_vert,size: 35,color: Color(0xFF00D9BC),)
             ),
-            const SizedBox(width: 15,)
+            SizedBox(width: 15,)
           ],
         ),
       ),

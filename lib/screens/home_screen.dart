@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cravecrush/screens/guide_screen.dart';
+import 'package:cravecrush/screens/navbar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cravecrush/screens/login_screen.dart'; // Import your login screen
@@ -78,6 +79,7 @@ class _HomePageState extends State<HomePage> {
     Color accentColor = Theme.of(context).colorScheme.secondary;
 
     return Scaffold(
+      drawer: NavBar(),
       appBar: AppBar(
         title: const Text(
           'Quit Smoke',

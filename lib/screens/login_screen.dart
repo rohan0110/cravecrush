@@ -4,7 +4,7 @@ import 'package:cravecrush/screens/signup_screen.dart'; // Import your sign-up p
 import 'package:cravecrush/screens/home_screen.dart'; // Import your home page
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -13,6 +13,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   Future<void> _signInWithEmailAndPassword(BuildContext context) async {
     try {
@@ -46,34 +47,55 @@ class _LoginPageState extends State<LoginPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextFormField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  // You can add more complex email validation if needed
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  // You can add more complex password validation if needed
+                  return null;
+                },
               ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => _signInWithEmailAndPassword(context),
-              child: const Text('Sign In'),
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => _navigateToSignUpPage(context),
-              child: const Text('Don\'t have an account? Sign Up'),
-            ),
-          ],
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _signInWithEmailAndPassword(context);
+                  }
+                },
+                child: const Text('Sign In'),
+              ),
+              const SizedBox(height: 8),
+              TextButton(
+                onPressed: () => _navigateToSignUpPage(context),
+                child: const Text('Don\'t have an account? Sign Up'),
+              ),
+            ],
+          ),
         ),
       ),
     );

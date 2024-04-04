@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cravecrush/screens/login_screen.dart';
 import 'package:cravecrush/screens/home_screen.dart';
+import 'package:cravecrush/screens/notification_service.dart'; // Import your notification service file
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -10,6 +11,8 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // Initialize notifications
+  NotificationService.initialize();
   runApp(const MyApp());
 }
 
