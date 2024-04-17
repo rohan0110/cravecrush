@@ -44,8 +44,8 @@ Financial Savings:
 Quitting smoking not only improves health but also saves money. The cost of cigarettes adds up quickly, and quitting can free up funds for other priorities or savings.
 
 """,
-    newsImage: "assets/images/3.png",
-    image: "assets/images/3.png",
+    newsImage: "Images/3.png",
+    image: "Images/3.png",
     newsTitle: 'Why you should quite smoking?',
     newsCategories: "TRAVEL",
     date: 'Sunday 2 March 2024',
@@ -72,8 +72,8 @@ Financial Savings:
 Quitting smoking not only improves health but also saves money. The cost of cigarettes adds up quickly, and quitting can free up funds for other priorities or savings.
 
 """,
-    newsImage: "assets/images/4.png",
-    image: "assets/images/4.png",
+    newsImage: "Images/4.png",
+    image: "Images/4.png",
     newsTitle: 'Smoking Cessation Strategies: A Path to Quitting for Good',
     newsCategories: "MUSIC",
     date: 'Saturday 29 Nov 2023',
@@ -100,8 +100,8 @@ Mental Health and Well-being:
 Smoking is closely linked to mental health issues such as depression, anxiety, and low self-esteem. While some individuals may use smoking as a form of self-medication, the long-term effects of smoking on mental well-being can be detrimental.
 
 """,
-    newsImage: "assets/images/11.png",
-    image: "assets/images/11.png",
+    newsImage: "Images/11.png",
+    image: "Images/11.png",
     newsTitle: "The Psychological and Social Impacts of Smoking",
     newsCategories: "TECH",
     date: 'Saturday 29 Nov 2019',
@@ -150,8 +150,8 @@ Conclusion:
 Secondhand smoke exposure poses serious health risks to non-smokers, especially children, pregnant women, and individuals with pre-existing health conditions. By implementing smoke-free policies, promoting smoking cessation, and creating smoke-free environments, we can protect non-smokers from the harmful effects of secondhand smoke and improve public health outcomes. It is essential to continue raising awareness about the risks of secondhand smoke and advocating for measures to reduce exposure and promote smoke-free living.
 
 """,
-    newsImage: "assets/images/7.png",
-    image: "assets/images/7.png",
+    newsImage: "Images/7.png",
+    image: "Images/7.png",
     newsTitle: "Secondhand Smoke: Risks and Impacts",
     newsCategories: "WORLD",
     date: 'Saturday 29 Nov 1101',
@@ -182,7 +182,7 @@ class Video {
 
 List<Video> videoItems = [
   Video(
-    image: "assets/images/6.png",
+    image: "Images/6.png",
     date: 'Saturday 29 Nov 1101',
     title: "Quitting Smoking Timeline",
     category: "Technology",
@@ -200,7 +200,7 @@ List<Video> videoItems = [
     videoUrl: "https://youtu.be/fLbQfMmrISE?si=nDjK-6E6WiW1KxTM",
   ),
   Video(
-    image: "assets/images/12.webp",
+    image: "Images/12.webp",
     date: 'Saturday 29 Nov 1101',
     title: "How do cigarettes affect the body?",
     category: "Technology",
@@ -218,7 +218,7 @@ List<Video> videoItems = [
     videoUrl: "https://youtu.be/Y18Vz51Nkos?si=9pHy674C1EszeU3b",
   ),
   Video(
-    image: "assets/images/6.png",
+    image: "Images/6.png",
     date: 'Monday 12 April 2024',
     title: "How to Quit Smoking, Vaping or Dipping Tobacco",
     category: "Food",
@@ -236,7 +236,7 @@ List<Video> videoItems = [
     videoUrl: "https://youtu.be/QpnGsasp9j8?si=zQMz8NVm4uQPqgnX",
   ),
   Video(
-    image: "assets/images/news travel.png",
+    image: "Images/news travel.png",
     date: 'Saturday 29 Nov 1101',
     title: "This Is What Happens To Your Body When You Stop Smoking Tobacco",
     category: "Health",
@@ -253,7 +253,7 @@ List<Video> videoItems = [
     videoUrl: "https://youtu.be/D8gygc4boZA?si=58PVhCugnbiMvvrk",
   ),
   Video(
-    image: "assets/images/tech image.png",
+    image: "Images/tech image.png",
     date: 'Saturday 29 Nov 1101',
     title: "5 TIPS to QUIT SMOKING",
     category: "Health",
@@ -270,7 +270,7 @@ List<Video> videoItems = [
   ),
 
   Video(
-    image: "assets/images/world image.png",
+    image: "Images/world image.png",
     date: 'Saturday 29 Nov 1101',
     title: "Weed Smoking",
     category: "Health",

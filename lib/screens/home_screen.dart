@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'package:cravecrush/models/timeline_date.dart';
 import 'package:cravecrush/screens/guide_screen.dart';
+import 'package:cravecrush/screens/login_screen.dart';
 import 'package:cravecrush/screens/navbar_screen.dart';
+import 'package:cravecrush/screens/wallet_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cravecrush/screens/login_screen.dart'; // Import your login screen
+import 'timeline_screen.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -16,10 +19,12 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   int _smokeFreeHours = 0;
   Timer? _timer;
+  late final List<TimelineDay> daysList; // Removed const keyword
 
   @override
   void initState() {
     super.initState();
+    daysList = getDummyTimelineDays(); // Initialize daysList in initState
     _loadSmokeFreeHours();
     _startTimer();
   }
@@ -52,12 +57,6 @@ class _HomePageState extends State<HomePage> {
     prefs.setInt('smokeFreeHours', _smokeFreeHours);
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   void _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // Clear all stored data
@@ -71,6 +70,20 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const NewsHomePage()),
+    );
+  }
+
+  void _navigateToWalletPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const WalletPage()),
+    );
+  }
+
+  void _navigateToHealthPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TimelinePage(daysList: daysList)),
     );
   }
 
@@ -106,7 +119,6 @@ class _HomePageState extends State<HomePage> {
               margin: const EdgeInsets.all(0.0),
               padding: const EdgeInsets.all(20.0),
               height: MediaQuery.of(context).size.height / 2,
-
               child: Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -182,6 +194,10 @@ class _HomePageState extends State<HomePage> {
       onPressed: () {
         if (label == 'Guide') {
           _navigateToGuidePage(); // Navigate to the guide page
+        } else if (label == 'Wallet') {
+          _navigateToWalletPage(); // Navigate to the wallet page
+        } else if (label == 'Health Progress') {
+          _navigateToHealthPage(); // Navigate to the health page
         } else {
           // Perform action when other buttons are pressed
         }

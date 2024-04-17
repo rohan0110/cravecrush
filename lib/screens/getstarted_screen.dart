@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cravecrush/screens/home_screen.dart'; // Import your home page
-import 'package:cravecrush/screens/notification_service.dart';
-import 'package:awesome_notifications/awesome_notifications.dart';
 
 class GetStartedPage extends StatefulWidget {
   final String uid;
@@ -88,9 +86,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
         // Ensure _userData[2]['times_to_smoke'] is of type List<String>
         List<String> timesToSmoke = List<String>.from(_userData[2]['times_to_smoke']);
         timesToSmoke.add(formattedTime);
-
-        // Pass the properly typed list to the NotificationService
-        NotificationService.scheduleNotifications(timesToSmoke);
       });
     }
   }
