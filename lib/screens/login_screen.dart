@@ -24,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
       // Navigate to home page after successful sign-in
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
+        MaterialPageRoute(builder: (context) =>  HomePage()),
       );
     } catch (e) {
       print('Failed to sign in with email and password: $e');

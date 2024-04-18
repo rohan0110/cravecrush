@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:cravecrush/models/timeline_date.dart';
 import 'package:cravecrush/screens/guide_screen.dart';
 import 'package:cravecrush/screens/login_screen.dart';
 import 'package:cravecrush/screens/navbar_screen.dart';
 import 'package:cravecrush/screens/wallet_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'timeline_screen.dart';
@@ -16,45 +18,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-  int _smokeFreeHours = 0;
-  Timer? _timer;
   late final List<TimelineDay> daysList; // Removed const keyword
+  final TextEditingController _entryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     daysList = getDummyTimelineDays(); // Initialize daysList in initState
-    _loadSmokeFreeHours();
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(hours: 1), (timer) {
-      setState(() {
-        _smokeFreeHours++;
-        _saveSmokeFreeHours();
-      });
-    });
-  }
-
-  void _resetTimer() {
-    setState(() {
-      _smokeFreeHours = 0;
-      _saveSmokeFreeHours();
-    });
-  }
-
-  void _loadSmokeFreeHours() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _smokeFreeHours = prefs.getInt('smokeFreeHours') ?? 0;
-    });
-  }
-
-  void _saveSmokeFreeHours() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('smokeFreeHours', _smokeFreeHours);
   }
 
   void _logout() async {
@@ -139,18 +109,23 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     // Display Smoke-Free Hours
-                    Transform.translate(
-                      offset: const Offset(0, -100), // Adjust the vertical offset to shift the text upwards
-                      child: Text(
-                        'Smoke-Free Hours: $_smokeFreeHours',
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 30.0, color: Colors.white),
-                      ),
+                    FutureBuilder<int>(
+                      future: _fetchSmokeFreeHours(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Display a loading indicator while fetching data
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}'); // Display an error message if fetching data fails
+                        } else {
+                          int smokeFreeHours = snapshot.data ?? 0; // Get the smoke-free hours from the snapshot
+                          return Text('Smoke-Free Hours: $smokeFreeHours'); // Display the smoke-free hours in your UI
+                        }
+                      },
                     ),
                     // Button to Reset Timer
                     ElevatedButton(
                       onPressed: () {
-                        _resetTimer();
+                        _showSmokeEntryDialog(context);
                       },
                       child: const Text('Smoked a Cigarette'),
                     ),
@@ -250,9 +225,111 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _showSmokeEntryDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Enter Smoking Status'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ElevatedButton(
+              onPressed: () async {
+                _submitSmokeEntry('Yes');
+                Navigator.pop(context); // Close the dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Your entry for today has been submitted.'),
+                  ),
+                );
+              },
+              child: Text('Yes'),
+            ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () async {
+                _submitSmokeEntry('No');
+                Navigator.pop(context); // Close the dialog
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Your entry for today has been submitted.'),
+                  ),
+                );
+              },
+              child: Text('No'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _submitSmokeEntry(String smokingStatus) async {
+    // Get the current user's UID
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid != null) {
+      // Get the current date
+      DateTime now = DateTime.now();
+      String formattedDate = '${now.year}-${now.month}-${now.day}';
+
+      try {
+        // Set the entry in Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('entries')
+            .doc(formattedDate)
+            .set({
+          'status': smokingStatus,
+        });
+        print('Entry added successfully');
+      } catch (e) {
+        print('Error adding entry: $e');
+      }
+    } else {
+      print('User is not logged in');
+    }
+  }
+
+  Future<int> _fetchSmokeFreeHours() async {
+    // Get the current user's UID
+    String? uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (uid != null) {
+      try {
+        // Fetch all entries for the current user
+        QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .collection('entries')
+            .get();
+
+        // Calculate smoke-free hours
+        int smokeFreeHours = 0;
+        snapshot.docs.forEach((doc) {
+          if (doc.exists) {
+            Map<String, dynamic> data = doc.data();
+            if (data['status'] == 'No') {
+              smokeFreeHours += 24; // Assuming each entry represents 24 hours of being smoke-free
+            }
+          }
+        });
+
+        return smokeFreeHours;
+      } catch (e) {
+        print('Error fetching smoke-free hours: $e');
+        return 0;
+      }
+    } else {
+      print('User is not logged in');
+      return 0;
+    }
+  }
+
   @override
   void dispose() {
-    _timer?.cancel();
+    _entryController.dispose();
     super.dispose();
   }
 }

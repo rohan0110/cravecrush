@@ -56,7 +56,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
             print('User data saved to Firestore');
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()),
+              MaterialPageRoute(builder: (context) =>  HomePage()),
                   (Route<dynamic> route) => false,
             );
           }).catchError((error) {
