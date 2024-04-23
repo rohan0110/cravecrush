@@ -10,68 +10,159 @@ class WalletPage extends StatefulWidget {
 }
 
 class _WalletPageState extends State<WalletPage> {
-  int numCigarettes = 0;
+  late String uid;
   double pricePerCigarette = 0.0;
-  late String uid; // Variable to store the user's UID
-
-  // Function to retrieve user data from Firestore
-  void _getUserData() {
-    FirebaseFirestore.instance.collection('users').doc(uid).get().then((snapshot) {
-      if (snapshot.exists) {
-        setState(() {
-          numCigarettes = snapshot.data()?['num_cigarettes'];
-          pricePerCigarette = snapshot.data()?['price_per_cigarette'];
-        });
-      }
-    }).catchError((error) {
-      print('Failed to fetch user data: $error');
-    });
-  }
+  late int numCigarettes;
+  late int smokingDays;
+  late int nonSmokingDays;
 
   @override
   void initState() {
     super.initState();
-    _getCurrentUser(); // Call method to get current user's UID
+    _getCurrentUser();
   }
 
-  // Method to get the current user's UID
   void _getCurrentUser() {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
         uid = user.uid;
       });
-      _getUserData(); // Fetch user data once the UID is obtained
+      _fetchUserData();
     }
+  }
+
+  void _fetchUserData() async {
+    try {
+      DocumentSnapshot<Map<String, dynamic>> snapshot =
+      await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      if (snapshot.exists) {
+        setState(() {
+          numCigarettes = snapshot.data()?['num_cigarettes'] ?? 0;
+          pricePerCigarette = snapshot.data()?['price_per_cigarette'] ?? 0.0;
+        });
+      }
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+    _fetchSmokingDays();
+  }
+
+  void _fetchSmokingDays() async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> snapshot =
+      await FirebaseFirestore.instance.collection('users').doc(uid).collection('entries').get();
+      setState(() {
+        smokingDays = snapshot.docs.where((doc) => doc.data()['status'] == 'Yes').length;
+        nonSmokingDays = snapshot.docs.where((doc) => doc.data()['status'] == 'No').length;
+      });
+    } catch (e) {
+      print('Error fetching smoking days: $e');
+    }
+  }
+
+  double _calculateTotalSavings() {
+    return numCigarettes * pricePerCigarette * nonSmokingDays;
+  }
+
+  double _calculateDailySavings() {
+    return numCigarettes * pricePerCigarette;
+  }
+
+  double _calculateTotalSpent() {
+    return numCigarettes * pricePerCigarette * smokingDays;
   }
 
   @override
   Widget build(BuildContext context) {
-    double dailySaving = numCigarettes * pricePerCigarette; // Assuming user's savings per cigarette
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wallet'),
+        title: Text(
+          'Wallet',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.green,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Icon(
-              Icons.account_balance_wallet,
-              size: 100.0,
+            SizedBox(height: 20.0),
+            _buildInfoCard(
+              title: 'Total No of Days',
+              value: '${smokingDays + nonSmokingDays}',
+              icon: Icons.calendar_today,
+              color: Colors.blue,
+            ),
+            SizedBox(height: 20.0),
+            _buildInfoCard(
+              title: 'No of Smoking Days',
+              value: '$smokingDays',
+              icon: Icons.smoking_rooms,
+              color: Colors.red,
+            ),
+            SizedBox(height: 20.0),
+            _buildInfoCard(
+              title: 'No of Non-Smoking Days',
+              value: '$nonSmokingDays',
+              icon: Icons.check_circle_outline,
               color: Colors.green,
             ),
             SizedBox(height: 20.0),
-            Text(
-              'Daily Savings',
-              style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+            _buildInfoCard(
+              title: 'Total Amount Saved',
+              value: '\u20B9${_calculateTotalSavings().toStringAsFixed(2)}',
+              icon: Icons.attach_money,
+              color: Colors.green,
             ),
-            SizedBox(height: 10.0),
+            SizedBox(height: 20.0),
+            _buildInfoCard(
+              title: 'Savings Today',
+              value: '\u20B9${_calculateDailySavings().toStringAsFixed(2)}',
+              icon: Icons.monetization_on,
+              color: Colors.green,
+            ),
+            SizedBox(height: 20.0),
+            _buildInfoCard(
+              title: 'Total Amount Spent',
+              value: '\u20B9${_calculateTotalSpent().toStringAsFixed(2)}',
+              icon: Icons.money_off,
+              color: Colors.red,
+            ),
+            SizedBox(height: 20.0),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({required String title, required String value, required IconData icon, required Color color}) {
+    return Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      child: Padding(
+        padding: EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  icon,
+                  color: color,
+                  size: 24.0,
+                ),
+                SizedBox(width: 10.0),
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+                ),
+              ],
+            ),
             Text(
-              '\$$dailySaving', // Display daily savings
-              style: TextStyle(fontSize: 36.0, color: Colors.green, fontWeight: FontWeight.bold),
+              value,
+              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
             ),
           ],
         ),

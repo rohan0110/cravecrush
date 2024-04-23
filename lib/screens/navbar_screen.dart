@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 import 'package:cravecrush/screens/user_profile_screen.dart';
 
-import 'callender_screen.dart'; // Import ProfilePage
+import 'callender_screen.dart';
+import 'stats_screen.dart'; // Import ProfilePage
 
 
 class NavBar extends StatelessWidget {
@@ -50,7 +51,7 @@ class NavBar extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CalendarPage()),
+                MaterialPageRoute(builder: (context) => StatsPage()),
               );
             },
           ),

@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cravecrush/models/timeline_date.dart';
+import 'package:cravecrush/screens/alert_screen.dart';
 import 'package:cravecrush/screens/guide_screen.dart';
 import 'package:cravecrush/screens/login_screen.dart';
 import 'package:cravecrush/screens/navbar_screen.dart';
@@ -18,21 +19,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late final List<TimelineDay> daysList; // Removed const keyword
+  late final List<TimelineDay> daysList;
   final TextEditingController _entryController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    daysList = getDummyTimelineDays(); // Initialize daysList in initState
+    daysList = getDummyTimelineDays();
   }
 
   void _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear(); // Clear all stored data
+    await prefs.clear();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginPage()), // Navigate to your login page
+      MaterialPageRoute(builder: (context) => const LoginPage()),
     );
   }
 
@@ -80,7 +81,6 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Dashboard Container
             Container(
               decoration: BoxDecoration(
                 color: const Color(0xFF43291F),
@@ -93,70 +93,111 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       'CraveCrush',
-                      textAlign: TextAlign.center,
-                    ),
-                    // Image Widget
-                    // Wrap Image.asset with Transform to move it upwards
-                    Transform.translate(
-                      offset: const Offset(0, -45), // Adjust the vertical offset to shift the image upwards
-                      child: Image.asset(
-                        'assets/images/homepage.png', // Replace with your image path
-                        width: 400, // Set image width
-                        height: 200, // Set image height
-                        fit: BoxFit.contain, // Adjust how the image fits inside the container
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 2.0,
+                            color: Colors.black.withOpacity(0.5),
+                            offset: Offset(2.0, 2.0),
+                          ),
+                        ],
                       ),
                     ),
-                    // Display Smoke-Free Hours
+                    SizedBox(height: 20), // Add space between title and image
+                    Image.asset(
+                      'assets/images/homepage.png',
+                      width: 400, // Adjust width as needed
+                      height: 200, // Adjust height as needed
+                      fit: BoxFit.contain,
+                    ),
+                    SizedBox(height: 15), // Add space between image and smoke-free hours
                     FutureBuilder<int>(
                       future: _fetchSmokeFreeHours(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator(); // Display a loading indicator while fetching data
+                          return CircularProgressIndicator();
                         } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}'); // Display an error message if fetching data fails
+                          return Text('Error: ${snapshot.error}');
                         } else {
-                          int smokeFreeHours = snapshot.data ?? 0; // Get the smoke-free hours from the snapshot
-                          return Text('Smoke-Free Hours: $smokeFreeHours'); // Display the smoke-free hours in your UI
+                          int smokeFreeHours = snapshot.data ?? 0;
+                          return Column(
+                            children: [
+                              Text(
+                                'Smoke-Free Hours:',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 2.0,
+                                      color: Colors.black.withOpacity(0.5),
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                               // Add space between text and value
+                              Text(
+                                '$smokeFreeHours',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: [
+                                    Shadow(
+                                      blurRadius: 2.0,
+                                      color: Colors.black.withOpacity(0.5),
+                                      offset: Offset(2.0, 2.0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
                         }
                       },
                     ),
-                    // Button to Reset Timer
+                    SizedBox(height: 20), // Add space between smoke-free hours and button
                     ElevatedButton(
                       onPressed: () {
                         _showSmokeEntryDialog(context);
                       },
-                      child: const Text('Smoked a Cigarette'),
+                      child: const Text('Smoked a Cigarette today?'),
                     ),
                   ],
                 ),
               ),
             ),
+
+
             const SizedBox(height: 20),
-            // Row for Buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(
-                  width: 110, // Set the width of the button
-                  height: 100, // Set the height of the button
+                  width: 110,
+                  height: 100,
                   child: _buildIconButton('Wallet', Icons.account_balance_wallet),
                 ),
                 SizedBox(
-                  width: 110, // Set the width of the button
-                  height: 100, // Set the height of the button
+                  width: 110,
+                  height: 100,
                   child: _buildIconButton('Health Progress', Icons.favorite),
                 ),
                 SizedBox(
-                  width: 110, // Set the width of the button
-                  height: 100, // Set the height of the button
+                  width: 110,
+                  height: 100,
                   child: _buildIconButton('Guide', Icons.book),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            // Emergency Support Button
             _buildEmergencySupportButton(),
           ],
         ),
@@ -168,17 +209,17 @@ class _HomePageState extends State<HomePage> {
     return ElevatedButton(
       onPressed: () {
         if (label == 'Guide') {
-          _navigateToGuidePage(); // Navigate to the guide page
+          _navigateToGuidePage();
         } else if (label == 'Wallet') {
-          _navigateToWalletPage(); // Navigate to the wallet page
+          _navigateToWalletPage();
         } else if (label == 'Health Progress') {
-          _navigateToHealthPage(); // Navigate to the health page
+          _navigateToHealthPage();
         } else {
           // Perform action when other buttons are pressed
         }
       },
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(10), // Adjust padding as needed
+        padding: const EdgeInsets.all(10),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -188,14 +229,14 @@ class _HomePageState extends State<HomePage> {
         children: [
           Icon(
             icon,
-            size: 26, // Set icon size
+            size: 26,
           ),
           const SizedBox(height: 5),
           Text(
             label,
             textAlign: TextAlign.center,
             style: const TextStyle(
-              fontSize: 16, // Set text size
+              fontSize: 16,
             ),
           ),
         ],
@@ -203,23 +244,25 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Function to Build Emergency Support Button
   Widget _buildEmergencySupportButton() {
     return Container(
-      margin: const EdgeInsets.only(top: 20), // Adjust top margin to move button below
+      margin: const EdgeInsets.only(top: 20),
       child: ElevatedButton(
         onPressed: () {
-          // Perform action when emergency support button is pressed
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DetailsPage()),
+          );
         },
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(30), // Adjust button size here
+          padding: const EdgeInsets.all(30),
           shape: const CircleBorder(),
-          backgroundColor: Colors.red, // Set button background color
+          backgroundColor: Colors.red,
         ),
         child: const Icon(
           Icons.warning,
-          color: Colors.white, // Set icon color
-          size: 40, // Set icon size
+          color: Colors.white,
+          size: 40,
         ),
       ),
     );
@@ -236,7 +279,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () async {
                 _submitSmokeEntry('Yes');
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Your entry for today has been submitted.'),
@@ -249,7 +292,7 @@ class _HomePageState extends State<HomePage> {
             ElevatedButton(
               onPressed: () async {
                 _submitSmokeEntry('No');
-                Navigator.pop(context); // Close the dialog
+                Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text('Your entry for today has been submitted.'),
@@ -265,16 +308,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _submitSmokeEntry(String smokingStatus) async {
-    // Get the current user's UID
     String? uid = FirebaseAuth.instance.currentUser?.uid;
 
     if (uid != null) {
-      // Get the current date
       DateTime now = DateTime.now();
       String formattedDate = '${now.year}-${now.month}-${now.day}';
 
       try {
-        // Set the entry in Firestore
         await FirebaseFirestore.instance
             .collection('users')
             .doc(uid)
@@ -293,26 +333,26 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<int> _fetchSmokeFreeHours() async {
-    // Get the current user's UID
     String? uid = FirebaseAuth.instance.currentUser?.uid;
 
     if (uid != null) {
       try {
-        // Fetch all entries for the current user
+        // Get all entries for the current user
         QuerySnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore.instance
             .collection('users')
             .doc(uid)
             .collection('entries')
             .get();
 
-        // Calculate smoke-free hours
+        // Initialize smoke-free hours
         int smokeFreeHours = 0;
+
+        // Iterate through all entries
         snapshot.docs.forEach((doc) {
-          if (doc.exists) {
-            Map<String, dynamic> data = doc.data();
-            if (data['status'] == 'No') {
-              smokeFreeHours += 24; // Assuming each entry represents 24 hours of being smoke-free
-            }
+          Map<String, dynamic> data = doc.data();
+          String status = data['status'];
+          if (status == 'No') {
+            smokeFreeHours += 24; // Assuming each entry represents 24 hours of being smoke-free
           }
         });
 
