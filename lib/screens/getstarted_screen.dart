@@ -294,10 +294,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
-
-
-
-
   Widget _buildReasonsSection() {
     return Form(
       key: _formKeys[2],
@@ -377,8 +373,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
       ),
     );
   }
-
-
 
   Widget _buildMultiSelectFormField({
     required String title,

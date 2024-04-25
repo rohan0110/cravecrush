@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cravecrush/models/timeline_date.dart';
 import 'package:cravecrush/screens/alert_screen.dart';
@@ -7,10 +8,10 @@ import 'package:cravecrush/screens/login_screen.dart';
 import 'package:cravecrush/screens/navbar_screen.dart';
 import 'package:cravecrush/screens/wallet_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'timeline_screen.dart';
+import 'dart:ui' show lerpDouble; // Add this import for lerpDouble
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,14 +20,21 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late final List<TimelineDay> daysList;
   final TextEditingController _entryController = TextEditingController();
+  late AnimationController _controller;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     daysList = getDummyTimelineDays();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.9, end: 1.1).animate(_controller);
   }
 
   void _logout() async {
@@ -61,8 +69,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    Color accentColor = Theme.of(context).colorScheme.secondary;
+
     return Scaffold(
-      drawer: const NavBar(),
+      drawer: NavBar(),
       appBar: AppBar(
         title: const Text(
           'Quit Smoke',
@@ -102,24 +112,24 @@ class _HomePageState extends State<HomePage> {
                           Shadow(
                             blurRadius: 2.0,
                             color: Colors.black.withOpacity(0.5),
-                            offset: const Offset(2.0, 2.0),
+                            offset: Offset(2.0, 2.0),
                           ),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20), // Add space between title and image
+                    SizedBox(height: 20), // Add space between title and image
                     Image.asset(
                       'assets/images/homepage.png',
                       width: 400, // Adjust width as needed
                       height: 200, // Adjust height as needed
                       fit: BoxFit.contain,
                     ),
-                    const SizedBox(height: 15), // Add space between image and smoke-free hours
+                    SizedBox(height: 15), // Add space between image and smoke-free hours
                     FutureBuilder<int>(
                       future: _fetchSmokeFreeHours(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return const CircularProgressIndicator();
+                          return CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
@@ -136,12 +146,12 @@ class _HomePageState extends State<HomePage> {
                                     Shadow(
                                       blurRadius: 2.0,
                                       color: Colors.black.withOpacity(0.5),
-                                      offset: const Offset(2.0, 2.0),
+                                      offset: Offset(2.0, 2.0),
                                     ),
                                   ],
                                 ),
                               ),
-                               // Add space between text and value
+                              // Add space between text and value
                               Text(
                                 '$smokeFreeHours',
                                 style: TextStyle(
@@ -152,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                                     Shadow(
                                       blurRadius: 2.0,
                                       color: Colors.black.withOpacity(0.5),
-                                      offset: const Offset(2.0, 2.0),
+                                      offset: Offset(2.0, 2.0),
                                     ),
                                   ],
                                 ),
@@ -162,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                         }
                       },
                     ),
-                    const SizedBox(height: 20), // Add space between smoke-free hours and button
+                    SizedBox(height: 20), // Add space between smoke-free hours and button
                     ElevatedButton(
                       onPressed: () {
                         _showSmokeEntryDialog(context);
@@ -246,23 +256,43 @@ class _HomePageState extends State<HomePage> {
   Widget _buildEmergencySupportButton() {
     return Container(
       margin: const EdgeInsets.only(top: 20),
-      child: ElevatedButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => DetailsPage()),
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _animation.value,
+            child: ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => DetailsPage()),
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(30),
+                shape: const CircleBorder(),
+                backgroundColor: Colors.red,
+              ),
+              child: Stack(
+                children: [
+                  const Icon(
+                    Icons.warning,
+                    color: Colors.white,
+                    size: 40,
+                  ),
+                  Positioned.fill(
+                    child: Container(
+                      alignment: Alignment.center,
+                      child: CustomPaint(
+                        painter: SmokePainter(_animation.value),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(30),
-          shape: const CircleBorder(),
-          backgroundColor: Colors.red,
-        ),
-        child: const Icon(
-          Icons.warning,
-          color: Colors.white,
-          size: 40,
-        ),
       ),
     );
   }
@@ -271,7 +301,7 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Enter Smoking Status'),
+        title: Text('Enter Smoking Status'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -280,25 +310,25 @@ class _HomePageState extends State<HomePage> {
                 _submitSmokeEntry('Yes');
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Text('Your entry for today has been submitted.'),
                   ),
                 );
               },
-              child: const Text('Yes'),
+              child: Text('Yes'),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
                 _submitSmokeEntry('No');
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     content: Text('Your entry for today has been submitted.'),
                   ),
                 );
               },
-              child: const Text('No'),
+              child: Text('No'),
             ),
           ],
         ),
@@ -322,18 +352,12 @@ class _HomePageState extends State<HomePage> {
             .set({
           'status': smokingStatus,
         });
-        if (kDebugMode) {
-          print('Entry added successfully');
-        }
+        print('Entry added successfully');
       } catch (e) {
-        if (kDebugMode) {
-          print('Error adding entry: $e');
-        }
+        print('Error adding entry: $e');
       }
     } else {
-      if (kDebugMode) {
-        print('User is not logged in');
-      }
+      print('User is not logged in');
     }
   }
 
@@ -375,6 +399,38 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _entryController.dispose();
+    _controller.dispose(); // Dispose the animation controller
     super.dispose();
+  }
+}
+
+class SmokePainter extends CustomPainter {
+  final double animationValue;
+
+  SmokePainter(this.animationValue);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    // Create smoke effect using a series of circles with varying opacity
+    final Paint paint = Paint()
+      ..color = Colors.grey.withOpacity(0.2)
+      ..style = PaintingStyle.fill;
+
+    final double maxSize = size.width * 0.8;
+    final double minSize = size.width * 0.6;
+    final double distance = size.width * 0.3;
+
+    for (int i = 0; i < 10; i++) {
+      final double circleSize = lerpDouble(minSize, maxSize, i / 10)!;
+      final double circleOpacity = lerpDouble(0.1, 0.2, i / 10)!;
+      paint.color = paint.color.withOpacity(circleOpacity);
+      final Offset offset = Offset(distance * sin(animationValue * pi * 2), i * 10.0);
+      canvas.drawCircle(offset, circleSize, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }

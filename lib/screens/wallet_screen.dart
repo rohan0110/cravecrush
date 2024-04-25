@@ -16,6 +16,7 @@ class _WalletPageState extends State<WalletPage> {
   late int numCigarettes;
   late int smokingDays;
   late int nonSmokingDays;
+  late String latestEntryStatus;
 
   @override
   void initState() {
@@ -58,9 +59,13 @@ class _WalletPageState extends State<WalletPage> {
       setState(() {
         smokingDays = snapshot.docs.where((doc) => doc.data()['status'] == 'Yes').length;
         nonSmokingDays = snapshot.docs.where((doc) => doc.data()['status'] == 'No').length;
+        // Get the latest entry status
+        latestEntryStatus = snapshot.docs.isEmpty ? '' : snapshot.docs.last.data()['status'];
       });
     } catch (e) {
-      print('Error fetching smoking days: $e');
+      if (kDebugMode) {
+        print('Error fetching smoking days: $e');
+      }
     }
   }
 
@@ -68,8 +73,24 @@ class _WalletPageState extends State<WalletPage> {
     return numCigarettes * pricePerCigarette * nonSmokingDays;
   }
 
+  double _calculateExpenseToday() {
+    // If there's no latest entry status or if it's 'Yes' (smoked), then the expense today will be 0
+    if (latestEntryStatus == 'Yes') {
+      return numCigarettes * pricePerCigarette;
+    }
+    else { // Otherwise, calculate the expense for the day
+      return 0.0;
+    }
+  }
+
   double _calculateDailySavings() {
-    return numCigarettes * pricePerCigarette;
+    // If there's no latest entry status or if it's 'No' (did not smoke), then calculate the savings for the day
+    if (latestEntryStatus == 'No') {
+      return numCigarettes * pricePerCigarette;
+    }
+    else{
+      return 0.0;
+    }
   }
 
   double _calculateTotalSpent() {
@@ -118,6 +139,13 @@ class _WalletPageState extends State<WalletPage> {
               value: '\u20B9${_calculateTotalSavings().toStringAsFixed(2)}',
               icon: Icons.attach_money,
               color: Colors.green,
+            ),
+            const SizedBox(height: 20.0),
+            _buildInfoCard(
+              title: 'Expense Today',
+              value: '\u20B9${_calculateExpenseToday().toStringAsFixed(2)}',
+              icon: Icons.money_off,
+              color: Colors.red,
             ),
             const SizedBox(height: 20.0),
             _buildInfoCard(
