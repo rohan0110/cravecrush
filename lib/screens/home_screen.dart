@@ -7,6 +7,7 @@ import 'package:cravecrush/screens/login_screen.dart';
 import 'package:cravecrush/screens/navbar_screen.dart';
 import 'package:cravecrush/screens/wallet_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'timeline_screen.dart';
@@ -60,10 +61,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    Color accentColor = Theme.of(context).colorScheme.secondary;
-
     return Scaffold(
-      drawer: NavBar(),
+      drawer: const NavBar(),
       appBar: AppBar(
         title: const Text(
           'Quit Smoke',
@@ -103,24 +102,24 @@ class _HomePageState extends State<HomePage> {
                           Shadow(
                             blurRadius: 2.0,
                             color: Colors.black.withOpacity(0.5),
-                            offset: Offset(2.0, 2.0),
+                            offset: const Offset(2.0, 2.0),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 20), // Add space between title and image
+                    const SizedBox(height: 20), // Add space between title and image
                     Image.asset(
                       'assets/images/homepage.png',
                       width: 400, // Adjust width as needed
                       height: 200, // Adjust height as needed
                       fit: BoxFit.contain,
                     ),
-                    SizedBox(height: 15), // Add space between image and smoke-free hours
+                    const SizedBox(height: 15), // Add space between image and smoke-free hours
                     FutureBuilder<int>(
                       future: _fetchSmokeFreeHours(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
@@ -137,7 +136,7 @@ class _HomePageState extends State<HomePage> {
                                     Shadow(
                                       blurRadius: 2.0,
                                       color: Colors.black.withOpacity(0.5),
-                                      offset: Offset(2.0, 2.0),
+                                      offset: const Offset(2.0, 2.0),
                                     ),
                                   ],
                                 ),
@@ -153,7 +152,7 @@ class _HomePageState extends State<HomePage> {
                                     Shadow(
                                       blurRadius: 2.0,
                                       color: Colors.black.withOpacity(0.5),
-                                      offset: Offset(2.0, 2.0),
+                                      offset: const Offset(2.0, 2.0),
                                     ),
                                   ],
                                 ),
@@ -163,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                         }
                       },
                     ),
-                    SizedBox(height: 20), // Add space between smoke-free hours and button
+                    const SizedBox(height: 20), // Add space between smoke-free hours and button
                     ElevatedButton(
                       onPressed: () {
                         _showSmokeEntryDialog(context);
@@ -272,7 +271,7 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Enter Smoking Status'),
+        title: const Text('Enter Smoking Status'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -281,25 +280,25 @@ class _HomePageState extends State<HomePage> {
                 _submitSmokeEntry('Yes');
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Your entry for today has been submitted.'),
                   ),
                 );
               },
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
                 _submitSmokeEntry('No');
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Your entry for today has been submitted.'),
                   ),
                 );
               },
-              child: Text('No'),
+              child: const Text('No'),
             ),
           ],
         ),
@@ -323,12 +322,18 @@ class _HomePageState extends State<HomePage> {
             .set({
           'status': smokingStatus,
         });
-        print('Entry added successfully');
+        if (kDebugMode) {
+          print('Entry added successfully');
+        }
       } catch (e) {
-        print('Error adding entry: $e');
+        if (kDebugMode) {
+          print('Error adding entry: $e');
+        }
       }
     } else {
-      print('User is not logged in');
+      if (kDebugMode) {
+        print('User is not logged in');
+      }
     }
   }
 

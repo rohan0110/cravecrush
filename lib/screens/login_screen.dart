@@ -15,6 +15,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  String _errorMessage = '';
+
   Future<void> _signInWithEmailAndPassword(BuildContext context) async {
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -24,11 +26,24 @@ class _LoginPageState extends State<LoginPage> {
       // Navigate to home page after successful sign-in
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) =>  HomePage()),
+        MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } catch (e) {
       print('Failed to sign in with email and password: $e');
-      // Handle sign-in errors here
+      setState(() {
+        // Set error message based on authentication failure
+        if (e is FirebaseAuthException) {
+          if (e.code == 'user-not-found') {
+            _errorMessage = 'No user found with this email.';
+          } else if (e.code == 'wrong-password') {
+            _errorMessage = 'Incorrect password.';
+          } else {
+            _errorMessage = 'Incorrect Credentials';
+          }
+        } else {
+          _errorMessage = 'Incorrect Credentials';
+        }
+      });
     }
   }
 
@@ -45,17 +60,30 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Text('Login Page'),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 20),
+              const Text(
+                'Welcome Back!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'Email',
+                  border: OutlineInputBorder(),
+                  icon: Icon(Icons.email),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -65,11 +93,13 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               TextFormField(
                 controller: _passwordController,
                 decoration: const InputDecoration(
                   labelText: 'Password',
+                  border: OutlineInputBorder(),
+                  icon: Icon(Icons.lock),
                 ),
                 obscureText: true,
                 validator: (value) {
@@ -80,6 +110,18 @@ class _LoginPageState extends State<LoginPage> {
                   return null;
                 },
               ),
+              if (_errorMessage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    _errorMessage,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontStyle: FontStyle.italic,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {

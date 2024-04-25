@@ -81,7 +81,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: const Text('Profile'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -101,7 +101,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _buildOtherReasonStarted(),
               _buildReasonsToQuit(),
               _buildOtherReasonQuit(),
-              SizedBox(height: 32.0),
+              const SizedBox(height: 32.0),
               if (!_isEditing)
                 ElevatedButton(
                   onPressed: () {
@@ -109,18 +109,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       _isEditing = true;
                     });
                   },
-                  child: Text('Edit'),
+                  child: const Text('Edit'),
                 ),
               if (_isEditing)
                 ElevatedButton(
                   onPressed: () {
                     _updateProfile();
                   },
-                  child: Text('Update'),
+                  child: const Text('Update'),
                 ),
             ],
           )
-              : CircularProgressIndicator(),
+              : const CircularProgressIndicator(),
         ),
       ),
     );
@@ -132,7 +132,7 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         TextField(
           controller: controller,
@@ -141,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           enabled: _isEditing,
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Gender:',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -170,7 +170,7 @@ class _ProfilePageState extends State<ProfilePage> {
           }
               : null,
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -179,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Times to smoke:',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -187,7 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
           spacing: 8.0,
           children: _timesToSmoke.map((time) => Chip(label: Text(time))).toList(),
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -196,7 +196,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Reasons started smoking:',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -204,7 +204,7 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: _reasonsStarted.map((reason) => Text(reason)).toList(),
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -213,12 +213,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Other reasons started smoking:',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Text(_otherReasonStarted),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -227,7 +227,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Reasons to quit smoking:',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -235,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: _reasonsToQuit.map((reason) => Text(reason)).toList(),
         ),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -244,12 +244,12 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Other reasons to quit smoking:',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Text(_otherReasonQuit),
-        SizedBox(height: 16.0),
+        const SizedBox(height: 16.0),
       ],
     );
   }
@@ -267,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _isEditing = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Profile updated successfully'),
       ));
     }).catchError((error) {

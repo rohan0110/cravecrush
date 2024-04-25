@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarPage extends StatefulWidget {
@@ -49,7 +48,7 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calendar'),
+        title: const Text('Calendar'),
       ),
       body: _buildCalendar(),
     );
@@ -61,14 +60,14 @@ class _CalendarPageState extends State<CalendarPage> {
       lastDay: DateTime.utc(2030, 12, 31),
       focusedDay: DateTime.now(),
       calendarFormat: CalendarFormat.month,
-      headerStyle: HeaderStyle(
+      headerStyle: const HeaderStyle(
         titleTextStyle: TextStyle(fontSize: 20),
       ),
-      daysOfWeekStyle: DaysOfWeekStyle(
+      daysOfWeekStyle: const DaysOfWeekStyle(
         weekdayStyle: TextStyle(fontSize: 16),
         weekendStyle: TextStyle(fontSize: 16),
       ),
-      calendarStyle: CalendarStyle(
+      calendarStyle: const CalendarStyle(
         todayDecoration: BoxDecoration(
           color: Colors.blueAccent,
           shape: BoxShape.circle,
@@ -92,11 +91,11 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Widget _buildMarkers(DateTime day) {
-    if (_markedDates != null && _markedDates.contains(day)) {
+    if (_markedDates.contains(day)) {
       return Container(
         width: 8,
         height: 8,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.red, // Change color to represent smoking day
           shape: BoxShape.circle,
         ),
@@ -105,7 +104,7 @@ class _CalendarPageState extends State<CalendarPage> {
       return Container(
         width: 8,
         height: 8,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.green, // Change color to represent non-smoking day
           shape: BoxShape.circle,
         ),

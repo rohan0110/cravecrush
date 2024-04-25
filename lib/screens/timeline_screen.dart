@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cravecrush/models/timeline_date.dart';
+import '../models/timeline_date.dart';
 
 class TimelinePage extends StatelessWidget {
   final List<TimelineDay> daysList;
@@ -10,17 +10,24 @@ class TimelinePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Progress', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Color.fromARGB(0, 18, 6, 255),
-        elevation: 0, // Remove app bar shadow
+        backgroundColor: const Color.fromARGB(255, 92, 31, 206), // Updated background color
+        elevation: 0, // Remove elevation
+        centerTitle: true, // Center the title
+        title: const Text(
+          'Timeline',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white, // White color for the "Timeline" text
+          ),
+        ),
       ),
-      extendBodyBehindAppBar: true, // Extend background behind app bar
+      extendBodyBehindAppBar: true,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromARGB(255, 254, 62, 29), // Deep purple
-              Color.fromARGB(255, 87, 62, 227), // Vibrant pink
+              Color.fromARGB(255, 237, 247, 246), // Light blue color for gradient start
+              Color.fromARGB(255, 220, 235, 233), // Lighter blue color for gradient end
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -28,48 +35,40 @@ class TimelinePage extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SizedBox(height: kToolbarHeight), // Match app bar height
+              const Text(
+                'Your Timeline',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20.0),
               Expanded(
                 child: ListView.builder(
                   itemCount: daysList.length,
                   itemBuilder: (context, index) {
                     final day = daysList[index];
-                    return Container(
-                      margin: EdgeInsets.symmetric(vertical: 8.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white, // Changed to white background for all cards
+                    return Card(
+                      elevation: 3.0,
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 1,
-                            blurRadius: 3,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
                       ),
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: day.completed ? Color.fromARGB(255, 3, 252, 11) : Color.fromARGB(255, 78, 253, 213),
-                          child: Icon(
-                            day.completed ? Icons.check : Icons.circle,
-                            color: Colors.white,
-                          ),
-                        ),
                         title: Text(
-                          '${day.dayNumber}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: day.completed ? Color.fromARGB(255, 169, 0, 253) :  Color.fromARGB(255, 244, 129, 42),
-                          ),
+                          day.dayNumber,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
                           day.changes,
-                          style: TextStyle(color: Color.fromARGB(167, 0, 0, 0)),
+                          style: const TextStyle(fontSize: 16.0),
                         ),
                       ),
                     );

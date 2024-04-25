@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class PushNotifications{
@@ -18,7 +19,9 @@ class PushNotifications{
     );
 
     final token = await _firebaseMessaging.getToken();
-    print("device token : $token");
+    if (kDebugMode) {
+      print("device token : $token");
+    }
   }
 
   static Future localNotiInit() async {
@@ -26,7 +29,7 @@ class PushNotifications{
     AndroidInitializationSettings(
       '@mipmap/ic_launcher',
     );
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(
           android: initializationSettingsAndriod,
         );

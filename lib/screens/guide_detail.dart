@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cravecrush/models/guide_model.dart';
+
+import '../models/guide_model.dart';
+
 
 
 class DetailNews extends StatelessWidget {
@@ -31,7 +33,7 @@ class DetailNews extends StatelessWidget {
                   height: 20,
                 ),
                 Text(
-                  "${news.date} . ${news.newsCategories.toLowerCase()}",
+                  "${news.date}",
                   style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -79,71 +81,7 @@ class DetailNews extends StatelessWidget {
           ),
         ),
       ),
-      bottomSheet: Container(
-        height: 75,
-        decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(spreadRadius: 1, blurRadius: 2, offset: Offset(0, 3))
-            ],
-            borderRadius: BorderRadius.circular(50)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 17),
-              child: Container(
-                height: 50,
-                width: MediaQuery.of(context).size.width / 2,
-                decoration: BoxDecoration(
-                    color: const Color(0xFFDDEAFF),
-                    borderRadius: BorderRadius.circular(60)),
-                child: Row(
-                  children: [
-                    const SizedBox(
-                      width: 13,
-                    ),
-                    Image.asset(
-                      "assets/images/chat.png",
-                      height: 45,
-                    ),
-                    const Text(
-                      "Add a comment",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Color(0xFF277AFF),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            CircleAvatar(
-              radius: 25,
-              backgroundColor: const Color(0xFFEDE3FA),
-              child: Image.asset(
-                "assets/images/icon.png",
-                height: 32,
-              ),
-            ),
-            CircleAvatar(
-              radius: 25,
-              backgroundColor: const Color(0xFFFFF7E2),
-              child: Image.asset(
-                "assets/images/star.png",
-                height: 32,
-              ),
-            ),
-            const CircleAvatar(
-                radius: 25,
-                backgroundColor: Color(0xFFD9F9F5),
-                child:Icon(Icons.more_vert,size: 35,color: Color(0xFF00D9BC),)
-            ),
-            SizedBox(width: 15,)
-          ],
-        ),
-      ),
+
     );
   }
 }

@@ -31,11 +31,12 @@ class DetailVideo extends StatelessWidget {
                   height: 20,
                 ),
                 Text(
-                  "${video.date} . ${video.category.toLowerCase()}",
+                  "${video.date}",
                   style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black45),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black45,
+                  ),
                 ),
                 const SizedBox(
                   height: 12,
@@ -59,26 +60,23 @@ class DetailVideo extends StatelessWidget {
                   ),
                   child: YoutubePlayer(
                     controller: YoutubePlayerController(
-                      initialVideoId:
-                      YoutubePlayer.convertUrlToId(video.videoUrl) ?? '',
-                      flags: YoutubePlayerFlags(
+                      initialVideoId: YoutubePlayer.convertUrlToId(video.videoUrl) ?? '',
+                      flags: const YoutubePlayerFlags(
                         autoPlay: true,
                         mute: false,
                       ),
                     ),
                     showVideoProgressIndicator: true,
                     progressIndicatorColor: Colors.blueAccent,
-                    progressColors: ProgressBarColors(
+                    progressColors: const ProgressBarColors(
                       playedColor: Colors.blue,
                       handleColor: Colors.blueAccent,
                     ),
                   ),
                 ),
-
                 const SizedBox(
                   height: 15,
                 ),
-                // paceBetweenText(video.description),
                 Text(
                   video.summary,
                   style: const TextStyle(
@@ -95,11 +93,12 @@ class DetailVideo extends StatelessWidget {
       bottomSheet: Container(
         height: 75,
         decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(spreadRadius: 1, blurRadius: 2, offset: Offset(0, 3))
-            ],
-            borderRadius: BorderRadius.circular(50)),
+          color: Colors.white,
+          boxShadow: const [
+            BoxShadow(spreadRadius: 1, blurRadius: 2, offset: Offset(0, 3)),
+          ],
+          borderRadius: BorderRadius.circular(50),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -109,8 +108,9 @@ class DetailVideo extends StatelessWidget {
                 height: 50,
                 width: MediaQuery.of(context).size.width / 2,
                 decoration: BoxDecoration(
-                    color: const Color(0xFFDDEAFF),
-                    borderRadius: BorderRadius.circular(60)),
+                  color: const Color(0xFFDDEAFF),
+                  borderRadius: BorderRadius.circular(60),
+                ),
                 child: Row(
                   children: [
                     const SizedBox(
@@ -149,14 +149,15 @@ class DetailVideo extends StatelessWidget {
               ),
             ),
             const CircleAvatar(
-                radius: 25,
-                backgroundColor: Color(0xFFD9F9F5),
-                child: Icon(
-                  Icons.more_vert,
-                  size: 35,
-                  color: Color(0xFF00D9BC),
-                )),
-            SizedBox(
+              radius: 25,
+              backgroundColor: Color(0xFFD9F9F5),
+              child: Icon(
+                Icons.more_vert,
+                size: 35,
+                color: Color(0xFF00D9BC),
+              ),
+            ),
+            const SizedBox(
               width: 15,
             )
           ],
