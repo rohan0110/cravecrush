@@ -35,7 +35,7 @@ class _SignUpPageState extends State<SignUpPage> {
         // Set error message based on the sign-up failure
         if (e is FirebaseAuthException) {
           if (e.code == 'weak-password') {
-            _errorMessage = 'Password should be at least 6 characters long.';
+            _errorMessage = 'Password should be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, and one special character (@)';
           } else if (e.code == 'email-already-in-use') {
             _errorMessage = 'Email is already in use.';
           } else {
@@ -91,7 +91,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     return 'Please enter your email';
                   }
                   // Validate email format
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                  if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                     return 'Please enter a valid email address';
                   }
                   return null;
@@ -110,8 +110,8 @@ class _SignUpPageState extends State<SignUpPage> {
                     return 'Please enter a password';
                   }
                   // Validate password strength
-                  if (value.length < 6) {
-                    return 'Password should be at least 6 characters long';
+                  if (!RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[@]).{6,}$').hasMatch(value)) {
+                    return 'Password should be at least 6 characters long and contain at least one uppercase letter, one lowercase letter, and one special character (@)';
                   }
                   return null;
                 },

@@ -34,7 +34,7 @@ class DetailsPage extends StatelessWidget {
                   title: 'Spend Time with Family',
                   image: 'assets/images/family.jpg',
                   description:
-                  'Being around loved ones can provide emotional support and motivation to stay smoke-free.',
+                  'Being around loved ones can provide emotional support and motivation to stay ic_launcher-free.',
                   link:
                   'https://www.mayoclinic.org/healthy-lifestyle/adult-health/in-depth/support-groups/art-20044655',
                 ),
@@ -212,7 +212,7 @@ class StatsPage extends StatelessWidget {
             _buildStatItem(
               title: 'Secondhand Smoke',
               description:
-              'Exposure to secondhand smoke, also known as passive smoking, can cause serious health issues, especially in children and nonsmoking adults. It increases the risk of respiratory infections, asthma, sudden infant death syndrome (SIDS), and heart disease.',
+              'Exposure to secondhand ic_launcher, also known as passive smoking, can cause serious health issues, especially in children and nonsmoking adults. It increases the risk of respiratory infections, asthma, sudden infant death syndrome (SIDS), and heart disease.',
               image: 'assets/images/stat3.jpeg',
             ),
             _buildStatItem(

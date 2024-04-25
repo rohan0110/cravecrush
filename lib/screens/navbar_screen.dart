@@ -1,7 +1,9 @@
+import 'package:cravecrush/screens/user_exp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cravecrush/screens/user_profile_screen.dart';
+import 'about_us.dart';
 import 'stats_screen.dart';
 
 class NavBar extends StatelessWidget {
@@ -57,8 +59,13 @@ class NavBar extends StatelessWidget {
                       ),
                       ListTile(
                         leading: const Icon(Icons.message),
-                        title: const Text('Messages'),
-                        onTap: () => print('Message tapped'),
+                        title: const Text('User Experiences'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ExperiencePage()),
+                          );
+                          },
                       ),
                       ListTile(
                         leading: const Icon(Icons.line_axis),
@@ -71,14 +78,14 @@ class NavBar extends StatelessWidget {
                         },
                       ),
                       ListTile(
-                        leading: const Icon(Icons.share),
-                        title: const Text('Share'),
-                        onTap: () => print('share tapped'),
-                      ),
-                      ListTile(
-                        leading: const Icon(Icons.notifications),
-                        title: const Text('Notification'),
-                        onTap: () => print('notification tapped'),
+                        leading: const Icon(Icons.info),
+                        title: const Text('About us'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AboutUsPage()),
+                          );
+                        },
                       ),
                       ListTile(
                         leading: const Icon(Icons.logout),

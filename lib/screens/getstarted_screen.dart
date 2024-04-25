@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cravecrush/screens/home_screen.dart'; // Import your home page
@@ -26,7 +25,6 @@ class _GetStartedPageState extends State<GetStartedPage> {
     {},
     {},
     {
-      'times_to_smoke': [],
       'reasons_started': [],
       'reasons_to_quit': [],
       'other_reason_started': '',
@@ -48,24 +46,19 @@ class _GetStartedPageState extends State<GetStartedPage> {
             'gender': _userData[0]['gender'],
             'num_cigarettes': _userData[1]['num_cigarettes'],
             'price_per_cigarette': _userData[1]['price_per_cigarette'],
-            'times_to_smoke': _userData[2]['times_to_smoke'],
             'reasons_started': _userData[2]['reasons_started'],
             'other_reason_started': _userData[2]['other_reason_started'],
             'reasons_to_quit': _userData[2]['reasons_to_quit'],
             'other_reason_quit': _userData[2]['other_reason_quit'],
           }).then((_) {
-            if (kDebugMode) {
-              print('User data saved to Firestore');
-            }
+            print('User data saved to Firestore');
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const HomePage()),
                   (Route<dynamic> route) => false,
             );
           }).catchError((error) {
-            if (kDebugMode) {
-              print('Failed to save user data: $error');
-            }
+            print('Failed to save user data: $error');
           });
         } catch (error) {
           print('Failed to save user data: $error');
@@ -78,6 +71,7 @@ class _GetStartedPageState extends State<GetStartedPage> {
       }
     }
   }
+
 
   void _previousPage() {
     if (_currentPageIndex > 0) {
@@ -294,6 +288,10 @@ class _GetStartedPageState extends State<GetStartedPage> {
     );
   }
 
+
+
+
+
   Widget _buildReasonsSection() {
     return Form(
       key: _formKeys[2],
@@ -373,6 +371,8 @@ class _GetStartedPageState extends State<GetStartedPage> {
       ),
     );
   }
+
+
 
   Widget _buildMultiSelectFormField({
     required String title,

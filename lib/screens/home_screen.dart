@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     daysList = getDummyTimelineDays();
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
     )..repeat(reverse: true);
     _animation = Tween<double>(begin: 0.9, end: 1.1).animate(_controller);
   }
@@ -72,7 +72,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Color accentColor = Theme.of(context).colorScheme.secondary;
 
     return Scaffold(
-      drawer: NavBar(),
+      backgroundColor: const Color(0xFFE6E6E5),
+      drawer: const NavBar(),
       appBar: AppBar(
         title: const Text(
           'Quit Smoke',
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           children: [
             Container(
               decoration: BoxDecoration(
-                color: const Color(0xFF43291F),
+                color: const Color(0xFF5A301C),
                 borderRadius: BorderRadius.circular(0.0),
               ),
               margin: const EdgeInsets.all(0.0),
@@ -102,34 +103,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'CraveCrush',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 2.0,
-                            color: Colors.black.withOpacity(0.5),
-                            offset: Offset(2.0, 2.0),
-                          ),
-                        ],
-                      ),
+                    Image.asset(
+                      'assets/images/title.png',
+                      width: 600, // Adjust width as needed
+                      height: 80, // Adjust height as needed
+                      fit: BoxFit.contain,
                     ),
-                    SizedBox(height: 20), // Add space between title and image
                     Image.asset(
                       'assets/images/homepage.png',
                       width: 400, // Adjust width as needed
-                      height: 200, // Adjust height as needed
+                      height: 180, // Adjust height as needed
                       fit: BoxFit.contain,
                     ),
-                    SizedBox(height: 15), // Add space between image and smoke-free hours
+                    const SizedBox(height: 2), // Add space between image and smoke-free hours
                     FutureBuilder<int>(
                       future: _fetchSmokeFreeHours(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else {
@@ -140,13 +131,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 'Smoke-Free Hours:',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: 21,
                                   fontWeight: FontWeight.bold,
                                   shadows: [
                                     Shadow(
                                       blurRadius: 2.0,
                                       color: Colors.black.withOpacity(0.5),
-                                      offset: Offset(2.0, 2.0),
+                                      offset: const Offset(2.0, 2.0),
                                     ),
                                   ],
                                 ),
@@ -156,13 +147,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 '$smokeFreeHours',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 18,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   shadows: [
                                     Shadow(
                                       blurRadius: 2.0,
                                       color: Colors.black.withOpacity(0.5),
-                                      offset: Offset(2.0, 2.0),
+                                      offset: const Offset(2.0, 2.0),
                                     ),
                                   ],
                                 ),
@@ -172,12 +163,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         }
                       },
                     ),
-                    SizedBox(height: 20), // Add space between smoke-free hours and button
+                    const SizedBox(height: 10), // Add space between smoke-free hours and button
                     ElevatedButton(
                       onPressed: () {
                         _showSmokeEntryDialog(context);
                       },
-                      child: const Text('Smoked a Cigarette today?'),
+                      child: const Text('Smoked a Cigarette today?',
+                        style: TextStyle(
+                          color: Color(0xFF5A301C),
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -301,7 +296,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Enter Smoking Status'),
+        title: const Text('Enter Smoking Status'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -310,25 +305,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 _submitSmokeEntry('Yes');
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Your entry for today has been submitted.'),
                   ),
                 );
               },
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () async {
                 _submitSmokeEntry('No');
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
+                  const SnackBar(
                     content: Text('Your entry for today has been submitted.'),
                   ),
                 );
               },
-              child: Text('No'),
+              child: const Text('No'),
             ),
           ],
         ),
