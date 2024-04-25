@@ -5,26 +5,26 @@ class AboutUsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('About Us'),
+        title: const Text('About Us'),
       ),
-      backgroundColor: Color(0xFF2B2B2B), // Set the background color of the Scaffold
+      backgroundColor: const Color(0xFF2B2B2B), // Set the background color of the Scaffold
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
               height: 200, // Set a fixed height for the image container
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/images/breakthehabit.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Center(
+            const SizedBox(height: 20),
+            const Center(
               child: Padding(
-                padding: const EdgeInsets.all(1.0),
+                padding: EdgeInsets.all(1.0),
                 child: Text(
                   'About Us',
                   style: TextStyle(
@@ -35,9 +35,9 @@ class AboutUsPage extends StatelessWidget {
                 ),
               ),
             ),
-            Center(
+            const Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
                   'At QuitSmokingApp, our mission is to help you break free from the harmful habit of smoking and lead a healthier life. We understand the challenges and struggles that come with quitting smoking, and we are here to support you every step of the way.',
                   style: TextStyle(
@@ -48,10 +48,10 @@ class AboutUsPage extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 40), // Increased space for better separation
-            Center(
+            const SizedBox(height: 40), // Increased space for better separation
+            const Center(
               child: Padding(
-                padding: const EdgeInsets.all(2.0),
+                padding: EdgeInsets.all(2.0),
                 child: Text(
                   'Our Team',
                   style: TextStyle(
@@ -83,18 +83,18 @@ class AboutUsPage extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
-        color: Color(0xFF3B3B3B), // Set background color of the Card
+        color: const Color(0xFF3B3B3B), // Set background color of the Card
         child: ListTile(
           leading: CircleAvatar(
             backgroundImage: AssetImage(imagePath),
           ),
           title: Text(
             name,
-            style: TextStyle(color: Colors.white), // Text color
+            style: const TextStyle(color: Colors.white), // Text color
           ),
           subtitle: Text(
             role,
-            style: TextStyle(color: Colors.white), // Text color
+            style: const TextStyle(color: Colors.white), // Text color
           ),
         ),
       ),
